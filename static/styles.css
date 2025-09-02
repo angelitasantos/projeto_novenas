@@ -1,6 +1,10 @@
 :root {
     --bg-color: #faebd7;
     --primary-color: #F8F9FA;
+    --bg-danger: #8B0000;
+    --bg-warning: #ee9e3b;
+    --bg-success: #4CAF50;
+    --bg-danger-hover: #C41E3A;
     --text-dark: #333;
     --text-light: #FFF;
     --border-radius: 8px;
@@ -44,4 +48,81 @@ p { font-size: 1rem; text-align: justify; }
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     box-shadow: var(--box-shadow);
+}
+
+header {
+    background-color: var(--bg-danger);
+    color: var(--text-light);
+    text-align: center;
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+}
+
+/* Estilos para o seletor de novenas */
+.novena-selector {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.novena-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+}
+
+.novena-selector select {
+    width: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: var(--border-radius);
+    border: 1px solid #ced4da;
+    margin-bottom: 0.5rem;
+}
+
+.novena-selector .btn {
+    width: auto;
+    padding: 0.5rem 1rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    margin: 0.5rem 0;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-warning { background-color: var(--bg-warning); }
+.btn-warning:hover { background-color: var(--bg-danger-hover); }
+
+@media (max-width: 768px) {
+    .novena-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .novena-selector label {
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+    }
+    
+    .novena-selector select {
+        width: auto;
+        flex-grow: 1;
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+    }
+    
+    .novena-selector .btn {
+        width: auto;
+    }
 }

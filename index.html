@@ -9,7 +9,19 @@
 </head>
 <body>
 
-    <header><h1 class="text-center">Novenas</h1></header>
+    <header>
+        <h1>Titulo</h1>
+        <p class="text-center">...</p>
+        <div class="novena-selector">
+            <label for="novenaSelect">Selecione a Novena:</label>
+            <select id="novenaSelect">
+                <option value="novenas/novena-maos-ensanguentadas.json">Mãos Ensanguentadas de Jesus</option>
+                <option value="novenas/novena-divina-misericordia.json">Divina Misericórdia</option>
+                <option value="novenas/novena-imaculada-conceicao.json">Imaculada Conceição</option>
+            </select>
+            <button class="btn btn-warning" id="loadNovena">CARREGAR NOVENA</button>
+        </div>
+    </header>
     
     <main class="container">
         <section class="section">
