@@ -38,33 +38,80 @@ async function loadNovenaData(novenaFile = 'novenas/novena-maos-ensanguentadas.j
 
 // Atualizar o header e o footer com os dados da novena
 function updateHtml() {
-    const headerTitle = document.querySelector('header h1');
-    const headerSubtitle = document.querySelector('header p');
+    try {
+        // Verifica se novenaContent está definido
+        if (typeof novenaContent === 'undefined') {
+            console.warn('novenaContent não está definido.');
+            return;
+        }
 
-    if (headerTitle && novenaContent.title) {
-        headerTitle.textContent = novenaContent.title;
-    }
+        // Seleciona o header e a div.novena-selector
+        const header = document.querySelector('header');
+        const novenaSelector = header ? header.querySelector('.novena-selector') : null;
 
-    if (headerSubtitle && novenaContent.subtitle) {
-        headerSubtitle.textContent = novenaContent.subtitle;
-    }
+        if (!header || !novenaSelector) {
+            console.warn('Header ou .novena-selector não encontrado.');
+            return;
+        }
 
-    if (footerText && novenaContent.title) {
+        // Cria ou atualiza o h1
+        let headerTitle = header.querySelector('h1');
+        if (!headerTitle) {
+            headerTitle = document.createElement('h1');
+            header.insertBefore(headerTitle, novenaSelector);
+        }
+
+        // Cria ou atualiza o p (com classe text-center)
+        let headerSubtitle = header.querySelector('p.text-center');
+        if (!headerSubtitle) {
+            headerSubtitle = document.createElement('p');
+            headerSubtitle.classList.add('text-center');
+            header.insertBefore(headerSubtitle, novenaSelector);
+        }
+
+        // Atualiza os textos
+        if (novenaContent.title) {
+            headerTitle.textContent = novenaContent.title;
+        }
+
+        if (novenaContent.subtitle) {
+            headerSubtitle.textContent = novenaContent.subtitle;
+        }
+
+        // Cria ou atualiza o footer
+        let footer = document.querySelector('footer');
+        if (!footer) {
+            footer = document.createElement('footer');
+            document.body.appendChild(footer);
+        }
+
         const currentYear = new Date().getFullYear();
-        footerText.textContent = `© ${currentYear} - ${novenaContent.title}`;
+        footer.textContent = `© ${currentYear} - ${novenaContent.title}`;
+
+    } catch (error) {
+        console.error('Erro ao atualizar o HTML:', error);
     }
 }
 
 // Carregar Novena Selecionada
 function loadSelectedNovena() {
-    const novenaSelect = document.getElementById('novenaSelect');
-    const selectedNovena = novenaSelect.value;
+    try {
+        const novenaSelect = document.getElementById('novenaSelect');
+        if (!novenaSelect) {
+            throw new Error('Elemento #novenaSelect não encontrado!');
+        }
 
-    // Limpar o localStorage para começar uma nova novena
-    localStorage.removeItem('novenaData');
+        const selectedNovena = novenaSelect.value;
 
-    // Recarregar a página com a nova novena
-    loadNovenaData(selectedNovena);
+        // Limpar o localStorage para começar uma nova novena
+        localStorage.removeItem('novenaData');
+
+        // Recarregar a página com a nova novena
+        loadNovenaData(selectedNovena);
+    } catch (error) {
+        console.error('Erro ao carregar a novena selecionada:', error);
+        alert('Ocorreu um erro ao carregar a novena. Por favor, tente novamente!');
+    }
 }
 
 // Preencher oração inicial e final com os dados do JSON
