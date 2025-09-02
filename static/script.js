@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loadNovena').addEventListener('click', function() {
         loadSelectedNovena();
     });
-
 });
 
 // Variável global para armazenar os dados do JSON
@@ -20,7 +19,16 @@ async function loadNovenaData(novenaFile = 'novenas/novena-maos-ensanguentadas.j
         localStorage.setItem('selectedNovena', novenaFile);
 
         const response = await fetch(novenaFile);
-        novenaContent = await response.json();
+        const loadedJson = await response.json();
+
+        // Se já houver dados salvos, usa eles; senão, salva o JSON recém-carregado
+        const persisted = getData(null);
+        if (persisted) {
+            novenaContent = persisted;
+        } else {
+            novenaContent = loadedJson;
+            saveData(novenaContent);
+        }
 
         // Atualizar o título da página
         document.title = novenaContent.title || document.title;
@@ -30,6 +38,12 @@ async function loadNovenaData(novenaFile = 'novenas/novena-maos-ensanguentadas.j
 
         // Preencher a oração inicial e final na página
         populateContent();
+
+        // Renderizar a novena no container principal
+        renderNovenaContainer();
+
+        // Renderizar os dias da novena
+        renderDayButtons();
     } catch (error) {
         console.error('Erro ao carregar dados da novena:', error);
         alert('Erro ao carregar os dados da novena. Por favor, recarregue a página.');
@@ -173,4 +187,184 @@ function populateContent() {
         console.error("Erro ao incluir o conteúdo das orações inicial e final:", error);
     }
 
+}
+
+// Preencher o titulo da novena na parte dos dias
+function renderNovenaContainer() {
+    try {
+        const novenaContainer = document.getElementById('novenaContainer');
+        if (!novenaContainer) {
+            console.warn("Elemento com id 'novenaContainer' não encontrado.");
+            return;
+        }
+
+        let novenaTitle = document.getElementById('novenaTitle');
+        if (!novenaTitle) {
+            novenaTitle = document.createElement('div');
+            novenaTitle.id = 'novenaTitle';
+            novenaContainer.prepend(novenaTitle);
+        }
+
+        novenaTitle.innerHTML = `
+            <h2 class="text-center text-red">${novenaContent.title}</h2>
+            <hr class="margin-vertical">
+            <p>${novenaContent.paragraph}</p>
+        `;
+    } catch (error) {
+        console.error('Erro ao renderizar o novenaContainer:', error);
+    }
+}
+
+// Gerar uma chave única para cada novena no localStorage
+function getNovenaKey() {
+    const novenaFile = localStorage.getItem('selectedNovena') || 'novenas/novena-maos-ensanguentadas.json';
+    // Criar uma chave única baseada no nome do arquivo
+    return `${novenaFile.replace(/[^a-zA-Z0-9]/g, '_')}`;
+}
+
+// Obter dados do localStorage
+function getData(defaultValue = null) {
+    try {
+        const key = getNovenaKey();
+        const raw = localStorage.getItem(key);
+        if (!raw) return defaultValue;
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error("Erro ao ler localStorage:", e);
+        return defaultValue;
+    }
+}
+
+// Salvar dados no localStorage
+function saveData(data) {
+    try {
+        const key = getNovenaKey();
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+        console.error("Erro ao salvar dados da novena no localStorage:", error);
+    }
+}
+
+// Carrega os dias da novena
+function renderDayButtons() {
+    try {
+        const daySelector = document.getElementById('daySelector');
+        if (!daySelector) {
+            console.warn("Elemento #daySelector não encontrado!");
+            return;
+        }
+
+        daySelector.innerHTML = "";
+
+        const data = getData() || novenaContent;
+
+        if (!data || !data.days) {
+            console.warn("Nenhum dado de dias encontrado no JSON!");
+            return;
+        }
+
+        data.days.forEach(dayData => {
+            const dayBtn = document.createElement('button');
+            dayBtn.className = 'day-btn';
+            dayBtn.textContent = `Dia ${dayData.day}`;
+            dayBtn.dataset.day = dayData.day;
+
+            if (dayData.read) dayBtn.classList.add('completed');
+            if (dayData.active) dayBtn.classList.add('active');
+
+            dayBtn.addEventListener('click', () => {
+                if (dayData.active) {
+                    // se já estava ativo -> desativa e limpa mensagem
+                    dayData.active = false;
+                    saveData(data);
+                    clearDayMessage();
+                } else {
+                    // ativa somente este dia e mostra a mensagem
+                    data.days.forEach(d => d.active = false);
+                    dayData.active = true;
+                    saveData(data);
+                    showDayMessage(dayData.day);
+                }
+                renderDayButtons();
+            });
+
+            daySelector.appendChild(dayBtn);
+        });
+
+        // Botão "Marcar este dia como lido" / "Novena Concluída"
+        const markDayReadBtn = document.getElementById('markDayRead');
+        if (markDayReadBtn) {
+            // remove listeners duplicados substituindo pelo clone
+            const newBtn = markDayReadBtn.cloneNode(true);
+            markDayReadBtn.parentNode.replaceChild(newBtn, markDayReadBtn);
+
+            const allCompleted = data.days.every(d => d.read);
+
+            if (allCompleted) {
+                newBtn.textContent = "Novena Concluída";
+                newBtn.disabled = true;
+                newBtn.classList.remove('btn-danger');
+                newBtn.classList.add('btn-success', 'completed');
+            } else {
+                newBtn.textContent = "Marcar este dia como lido";
+                newBtn.disabled = false;
+
+                newBtn.addEventListener('click', () => {
+                    const activeDay = data.days.find(d => d.active);
+                    if (!activeDay) {
+                        alert("Selecione um dia antes de marcar como lido!");
+                        return;
+                    }
+
+                    // marca como lido, remove active (oculta a mensagem) e salva
+                    activeDay.read = true;
+                    activeDay.active = false;
+                    saveData(data);
+
+                    // re-renderiza e limpa a mensagem
+                    renderDayButtons();
+                    clearDayMessage();
+                });
+            }
+        }
+
+    } catch (error) {
+        console.error("Erro ao renderizar os botões dos dias:", error);
+    }
+}
+
+// Mostrar mensagem do dia selecionado
+function showDayMessage(day) {
+    const data = getData() || novenaContent;
+    const dayIndex = data.days.findIndex(d => d.day === Number(day));
+    if (dayIndex === -1) {
+        clearDayMessage();
+        return;
+    }
+    const dayData = data.days[dayIndex];
+
+    const messageDiv = document.getElementById('dailyMessage');
+    messageDiv.innerHTML = `
+        <h3><strong>${dayData.title || ''}</strong></h3>
+        <p>${dayData.message1 || ''}</p>
+        <p>${dayData.message2 || ''}</p>
+        <p><strong>${dayData.message3 || ''}</strong></p>
+        <p><em>${dayData.message4 || ''}</em></p>
+    `;
+}
+
+// Limpar a mensagem do dia
+function clearDayMessage() {
+    const messageDiv = document.getElementById('dailyMessage');
+    messageDiv.innerHTML = '<p>Selecione um dia para visualizar a mensagem correspondente.</p>';
+
+    // remove a class active do DOM
+    document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+
+    // garante que o estado active no JSON esteja limpo e persiste (somente por segurança)
+    const data = getData() || novenaContent;
+    if (data && data.days) {
+        data.days.forEach(d => d.active = false);
+        saveData(data);
+    }
 }

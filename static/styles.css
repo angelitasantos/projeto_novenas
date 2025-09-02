@@ -5,6 +5,7 @@
     --bg-warning: #ee9e3b;
     --bg-success: #4CAF50;
     --bg-danger-hover: #C41E3A;
+    --bg-info: #e9ecef;
     --text-dark: #333;
     --text-light: #FFF;
     --border-radius: 8px;
@@ -113,6 +114,63 @@ footer {
 .btn-warning { background-color: var(--bg-warning); }
 .btn-warning:hover { background-color: var(--bg-danger-hover); }
 
+.btn-danger { background-color: var(--bg-danger); color: var(--text-light); }
+.btn-danger:hover { background-color: var(--bg-warning); color: var(--text-dark); }
+
+.btn-success { background-color: var(--bg-success); color: var(--text-light); }
+.btn-success:hover { background-color: var(--bg-warning); color: var(--text-dark); }
+
+.btn-success.completed:hover { background-color: var(--bg-success); color: var(--text-light); }
+
+
+/* Estilos para os botoes dos dias da novena */
+
+.day-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.day-btn {
+    background-color: var(--bg-info);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    text-align: center;
+}
+
+.day-btn.active {
+    background-color: var(--bg-danger);
+    color: white;
+}
+
+.day-btn.completed {
+    background-color: var(--bg-success);
+    color: white;
+}
+
+/* Estilo para as mensagens diárias */
+#dailyMessage {
+    background-color: var(--primary-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--bg-danger);
+}
+
+#dailyMessage h3 {
+    color: var(--bg-danger);
+    margin-bottom: 1rem;
+}
+
+#dailyMessage p {
+    margin-bottom: 0.5rem;
+    line-height: 1.8;
+}
+
 @media (max-width: 768px) {
     .novena-selector {
         display: flex;
@@ -135,5 +193,9 @@ footer {
     
     .novena-selector .btn {
         width: auto;
+    }
+
+    .day-selector {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
