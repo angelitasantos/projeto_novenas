@@ -30,8 +30,24 @@
             <button class="btn btn-danger" id="markDayRead">Marcar este dia como lido</button>
         </section>
 
+        <section class="section" id="rosarioContainer">
+            <div id="rosaryButtonContainer"><button class="btn btn-danger" id="startRosary">Iniciar Terço</button></div>
+            
+            <div class="progress-container">
+                <p>Progresso do terço hoje: <span id="progressText">0%</span></p>
+                <div class="progress-bar"><div class="progress" id="rosaryProgress" style="width: 0%;"></div></div>
+            </div>
+        </section>
+
         <section class="section" id="finalPrayer"></section>
     </main>
+
+    <div class="modal" id="prayerModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
 
     <footer><p class="text-center" id="footerText">© 2025 - </p></footer>
     

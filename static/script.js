@@ -11,6 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Variável global para armazenar os dados do JSON
 let novenaContent = {};
+let currentProgress = {
+                        basicPrayers: false,
+                        mysteries: [
+                            { title: "Primeiro Mistério", completed: false, prayers: Array(10).fill(false) },
+                            { title: "Segundo Mistério", completed: false, prayers: Array(10).fill(false) },
+                            { title: "Terceiro Mistério", completed: false, prayers: Array(10).fill(false) },
+                            { title: "Quarto Mistério", completed: false, prayers: Array(10).fill(false) },
+                            { title: "Quinto Mistério", completed: false, prayers: Array(10).fill(false) }
+                        ],
+                        finalPrayer: false
+                    };
+let lastCompleted = null;
 
 // Carregar dados do JSON
 async function loadNovenaData(novenaFile = 'novenas/novena-maos-ensanguentadas.json') {
@@ -44,6 +56,20 @@ async function loadNovenaData(novenaFile = 'novenas/novena-maos-ensanguentadas.j
 
         // Renderizar os dias da novena
         renderDayButtons();
+
+        // Renderizar o terço no container principal
+        renderRosarioContainer();
+
+        // Atualizar progresso do terço
+        updateRosaryProgress();
+
+        // Atualizar botão do terço
+        updateRosaryButton();
+
+        // Fechar modal
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('prayerModal').style.display = 'none';
+        });
     } catch (error) {
         console.error('Erro ao carregar dados da novena:', error);
         alert('Erro ao carregar os dados da novena. Por favor, recarregue a página.');
@@ -265,7 +291,7 @@ function renderDayButtons() {
 
         data.days.forEach(dayData => {
             const dayBtn = document.createElement('button');
-            dayBtn.className = 'day-btn';
+            dayBtn.className = 'btn-day';
             dayBtn.textContent = `Dia ${dayData.day}`;
             dayBtn.dataset.day = dayData.day;
 
@@ -359,12 +385,277 @@ function clearDayMessage() {
     messageDiv.innerHTML = '<p>Selecione um dia para visualizar a mensagem correspondente.</p>';
 
     // remove a class active do DOM
-    document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.btn-day').forEach(btn => btn.classList.remove('active'));
 
     // garante que o estado active no JSON esteja limpo e persiste (somente por segurança)
     const data = getData() || novenaContent;
     if (data && data.days) {
         data.days.forEach(d => d.active = false);
         saveData(data);
+    }
+}
+
+// Preencher o titulo da novena na parte dos dias
+function renderRosarioContainer() {
+    try {
+        const rosarioContainer = document.getElementById('rosarioContainer');
+        if (!rosarioContainer) {
+            console.warn("Elemento com id 'rosarioContainer' não encontrado.");
+            return;
+        }
+
+        let rosaryTitle = document.getElementById('rosaryTitle');
+        if (!rosaryTitle) {
+            rosaryTitle = document.createElement('div');
+            rosaryTitle.id = 'rosaryTitle';
+            rosarioContainer.prepend(rosaryTitle);
+        }
+
+        rosaryTitle.innerHTML = `
+            <h2 class="text-center text-red">${novenaContent.rosaryContent.title}</h2>
+            <hr class="margin-vertical">
+            <p class="text-center">Reze primeiro a Novena e, em seguida, o Terço.</p>
+        `;
+
+        let firstRosaryContent = document.getElementById('firstRosaryContent');
+        if (!firstRosaryContent) {
+            firstRosaryContent = document.createElement('div');
+            firstRosaryContent.id = 'firstRosaryContent';
+            rosaryTitle.after(firstRosaryContent);
+        }
+
+        // Preencher conteúdo inicial do terço
+        firstRosaryContent.innerHTML = `
+            ${novenaContent.rosaryContent.content.map(item => {
+                if (item.startsWith('<strong>') && item.endsWith('</strong>')) {
+                    return `<h4>${item}</h4>`;
+                } else {
+                    return `<p>${item}</p>`;
+                }
+            }).join('')}
+        `;
+    } catch (error) {
+        console.error('Erro ao renderizar o rosarioContainer:', error);
+    }
+}
+
+// Iniciar o terço
+function startRosary() {
+    const data = getData();
+    const progress = currentProgress;
+    
+    // Verificar se precisa começar pelas orações básicas
+    if (!progress.basicPrayers) {
+        showBasicPrayers();
+        return;
+    }
+    
+    // Encontrar o próximo mistério não completado
+    let nextMystery = null;
+    for (let i = 0; i < progress.mysteries.length; i++) {
+        if (!progress.mysteries[i].completed) {
+            nextMystery = i;
+            break;
+        }
+    }
+    
+    // Se todos os mistérios foram completados, mostrar oração final
+    if (nextMystery === null) {
+        if (!progress.finalPrayer) {
+            showFinalPrayer();
+        } else {
+            alert('Você já completou o terço hoje!');
+        }
+        return;
+    }
+    
+    // Mostrar o mistério encontrado
+    showMystery(nextMystery);
+}
+
+// Mostrar orações básicas
+function showBasicPrayers() {
+    const basicPrayers = novenaContent.rosaryPrayers.basicPrayers;
+    
+    let prayersHTML = `<h2 class="text-center">${basicPrayers.title}</h2><hr class="margin-vertical">`;
+    
+    basicPrayers.prayers.forEach(prayerItem => {
+        const prayer = novenaContent.sharedPrayers[prayerItem.prayer];
+        const repetitions = prayerItem.repetitions || 1;
+        
+        prayersHTML += `
+            <h4><strong>${prayer.title}${repetitions > 1 ? ` (${repetitions}x)` : ''}</strong></h4>
+            <p>${prayer.content}</p>
+            ${repetitions > 1 ? `<p><em>(Repetir ${repetitions} vezes)</em></p>` : ''}
+        `;
+    });
+    
+    prayersHTML += `<button class="btn btn-danger" id="completeBasicPrayers">Completar Orações Iniciais</button>`;
+    
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = prayersHTML;
+    
+    document.getElementById('prayerModal').style.display = 'block';
+    
+    document.getElementById('completeBasicPrayers').addEventListener('click', function() {
+        const data = getData();
+        currentProgress.basicPrayers = true;
+        saveData(data);
+        document.getElementById('prayerModal').style.display = 'none';
+        
+        // Iniciar o primeiro mistério
+        startRosary();
+    });
+}
+
+// Mostrar mistério
+function showMystery(mysteryIndex) {
+    const mystery = novenaContent.mysteries[mysteryIndex];
+    
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2>${mystery.title}</h2>
+        <hr class="margin-vertical">
+        <p>Meditação:</p>
+        <p class="meditation">${mystery.meditation}</p>
+        <button class="btn btn-danger" id="completeMystery">Completar Meditação</button>
+    `;
+    
+    document.getElementById('prayerModal').style.display = 'block';
+    
+    document.getElementById('completeMystery').addEventListener('click', function() {
+        const data = getData();
+        currentProgress.mysteries[mysteryIndex].completed = true;
+        saveData(data);
+        document.getElementById('prayerModal').style.display = 'none';
+        
+        // Mostrar as 10 rezas deste mistério
+        showPrayers(mysteryIndex);
+    });
+}
+
+// Mostrar as 10 rezas de um mistério
+function showPrayers(mysteryIndex) {
+    const data = getData();
+    const mystery = currentProgress.mysteries[mysteryIndex];
+    const prayerText = novenaContent.rosaryPrayers.prayerText;
+    
+    // Encontrar a próxima oração não completada
+    let nextPrayer = mystery.prayers.findIndex(prayer => !prayer);
+    
+    // Se todas as orações foram completadas, voltar para o terço
+    if (nextPrayer === -1) {
+        startRosary();
+        return;
+    }
+    
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2>${mystery.title} - Oração ${nextPrayer + 1}/10</h2>
+        <hr class="margin-vertical">
+        <p>${nextPrayer + 1} - ${prayerText}</p>
+        <div class="prayer-counter">
+            ${mystery.prayers.map((prayer, index) => `
+                <div class="btn btn-counter ${prayer ? 'active' : ''}">${index + 1}</div>
+            `).join('')}
+        </div>
+        <button class="btn btn-danger" id="completePrayer">Próxima Oração</button>
+    `;
+    
+    document.getElementById('prayerModal').style.display = 'block';
+    
+    document.getElementById('completePrayer').addEventListener('click', function() {
+        const data = getData();
+        currentProgress.mysteries[mysteryIndex].prayers[nextPrayer] = true;
+        saveData(data);
+        document.getElementById('prayerModal').style.display = 'none';
+        
+        // Mostrar a próxima oração ou voltar para o terço
+        showPrayers(mysteryIndex);
+    });
+}
+
+// Mostrar Oração Final do Terço
+function showFinalPrayer() {
+    const finalPrayer = novenaContent.rosaryPrayers.finalPrayer;
+    
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2 class="text-center">${finalPrayer.title}</h2>
+        <hr class="margin-vertical">
+        <p>${finalPrayer.content}</p>
+        <button class="btn btn-danger" id="completeFinalPrayer">Completar Oração Final</button>
+    `;
+    
+    document.getElementById('prayerModal').style.display = 'block';
+    
+    document.getElementById('completeFinalPrayer').addEventListener('click', function() {
+        const data = getData();
+        
+        // Garantir que a estrutura existe
+        if (!data.rosary) data.rosary = { currentProgress: {} };
+        if (!currentProgress) currentProgress = {};
+        
+        currentProgress.finalPrayer = true;
+        lastCompleted = new Date().toDateString();
+        
+        saveData(data);
+        document.getElementById('prayerModal').style.display = 'none';
+        
+        alert('Parabéns! Você completou o terço hoje!');
+    });
+}
+
+// Atualizar a barra de progresso do terço
+function updateRosaryProgress() {
+    const data = getData();
+    const progress = currentProgress;
+    
+    let completed = 0;
+    let total = 1; // Inicia com 1 para as orações básicas
+    
+    // Verificar orações básicas
+    if (progress.basicPrayers) completed++;
+    
+    // Verificar oração final
+    total++;
+    if (progress.finalPrayer) completed++;
+    
+    const percentage = Math.round((completed / total) * 100);
+    const progressBar = document.getElementById('rosaryProgress');
+    progressBar.style.width = `${percentage}%`;
+    
+    // Alterar cor da barra de progresso se estiver completa
+    if (percentage === 100) {
+        progressBar.classList.add('progress-completed');
+    } else {
+        progressBar.classList.remove('progress-completed');
+    }
+    
+    document.getElementById('progressText').textContent = `${percentage}%`;
+}
+
+// Atualizar o botão do terço
+function updateRosaryButton() {
+    const data = getData();
+    const rosaryButtonContainer = document.getElementById('rosaryButtonContainer');
+    const progress = currentProgress;
+    
+    // Verificar se o terço está completo
+    const isRosaryCompleted = progress.finalPrayer;
+    
+    if (isRosaryCompleted) {
+        rosaryButtonContainer.innerHTML = `
+            <button class="btn btn-completed" id="rosaryCompleted">Terço Concluído</button>
+        `;
+    } else {
+        rosaryButtonContainer.innerHTML = `
+            <button class="btn btn-danger" id="startRosary">Iniciar Terço</button>
+        `;
+        
+        // Re-adicionar o event listener
+        document.getElementById('startRosary').addEventListener('click', function() {
+            startRosary();
+        });
     }
 }

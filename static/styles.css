@@ -132,7 +132,7 @@ footer {
     margin-bottom: 1rem;
 }
 
-.day-btn {
+.btn-day {
     background-color: var(--bg-info);
     color: var(--text-color);
     padding: 0.5rem;
@@ -142,14 +142,14 @@ footer {
     text-align: center;
 }
 
-.day-btn.active {
+.btn-day.active {
     background-color: var(--bg-danger);
-    color: white;
+    color: var(--text-light);
 }
 
-.day-btn.completed {
+.btn-day.completed {
     background-color: var(--bg-success);
-    color: white;
+    color: var(--text-light);
 }
 
 /* Estilo para as mensagens diárias */
@@ -169,6 +169,87 @@ footer {
 #dailyMessage p {
     margin-bottom: 0.5rem;
     line-height: 1.8;
+}
+
+/* Estilo para Modais */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: var(--text-light);
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close-modal:hover {
+    color: var(--text-color);
+}
+
+.prayer-counter {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.btn-counter {
+    background-color: var(--bg-info);
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-counter.active {
+    background-color: var(--bg-danger);
+    color: var(--text-light);
+}
+
+.progress-container {
+    margin: 1.5rem 0;
+}
+
+.progress-bar {
+    height: 2rem;
+    background-color: var(--bg-info);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--bg-danger);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-completed {
+    background-color: var(--bg-success);
 }
 
 @media (max-width: 768px) {
@@ -196,6 +277,10 @@ footer {
     }
 
     .day-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .prayer-counter {
         grid-template-columns: repeat(2, 1fr);
     }
 }
