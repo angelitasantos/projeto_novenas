@@ -477,7 +477,7 @@ function startRosary() {
 function showBasicPrayers() {
     const basicPrayers = novenaContent.rosaryPrayers.basicPrayers;
     
-    let prayersHTML = `<h2 class="text-center">${basicPrayers.title}</h2><hr class="margin-vertical">`;
+    let prayersHTML = `<h2 class="text-center text-red">${basicPrayers.title}</h2><hr class="margin-vertical">`;
     
     basicPrayers.prayers.forEach(prayerItem => {
         const prayer = novenaContent.sharedPrayers[prayerItem.prayer];
@@ -514,7 +514,7 @@ function showMystery(mysteryIndex) {
     
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
-        <h2>${mystery.title}</h2>
+        <h2 class="text-center text-red">${mystery.title}</h2>
         <hr class="margin-vertical">
         <p>Meditação:</p>
         <p class="meditation">${mystery.meditation}</p>
@@ -551,7 +551,7 @@ function showPrayers(mysteryIndex) {
     
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
-        <h2>${mystery.title} - Oração ${nextPrayer + 1}/10</h2>
+        <h2 class="text-center text-red">${mystery.title} - Oração ${nextPrayer + 1}/10</h2>
         <hr class="margin-vertical">
         <p>${nextPrayer + 1} - ${prayerText}</p>
         <div class="prayer-counter">
@@ -581,7 +581,7 @@ function showFinalPrayer() {
     
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
-        <h2 class="text-center">${finalPrayer.title}</h2>
+        <h2 class="text-center text-red">${finalPrayer.title}</h2>
         <hr class="margin-vertical">
         <p>${finalPrayer.content}</p>
         <button class="btn btn-danger" id="completeFinalPrayer">Completar Oração Final</button>
