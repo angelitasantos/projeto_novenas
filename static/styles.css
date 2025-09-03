@@ -53,6 +53,9 @@ p { font-size: 1rem; text-align: justify; }
     box-shadow: var(--box-shadow);
 }
 
+button, select, input, a { outline: 2px solid transparent; /* evita outline feio, mas mantém foco */ }
+button:focus, select:focus { outline: 2px solid #f00; /* foco visível para teclado */ }
+
 header {
     background-color: var(--bg-danger);
     color: var(--text-light);
@@ -93,10 +96,7 @@ footer {
     margin-bottom: 0.5rem;
 }
 
-.novena-selector .btn {
-    width: auto;
-    padding: 0.5rem 1rem;
-}
+.novena-selector .btn { width: auto; padding: 0.5rem 1rem; }
 
 .btn {
     display: inline-block;
@@ -124,7 +124,6 @@ footer {
 
 
 /* Estilos para os botoes dos dias da novena */
-
 .day-selector {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -142,15 +141,8 @@ footer {
     text-align: center;
 }
 
-.btn-day.active {
-    background-color: var(--bg-danger);
-    color: var(--text-light);
-}
-
-.btn-day.completed {
-    background-color: var(--bg-success);
-    color: var(--text-light);
-}
+.btn-day.active { background-color: var(--bg-danger); color: var(--text-light); }
+.btn-day.completed { background-color: var(--bg-success); color: var(--text-light); }
 
 /* Estilo para as mensagens diárias */
 #dailyMessage {
@@ -161,15 +153,8 @@ footer {
     border-left: 4px solid var(--bg-danger);
 }
 
-#dailyMessage h3 {
-    color: var(--bg-danger);
-    margin-bottom: 1rem;
-}
-
-#dailyMessage p {
-    margin-bottom: 0.5rem;
-    line-height: 1.8;
-}
+#dailyMessage h3 { color: var(--bg-danger); margin-bottom: 1rem; }
+#dailyMessage p { margin-bottom: 0.5rem; line-height: 1.8; }
 
 /* Estilo para Modais */
 .modal {
@@ -205,9 +190,7 @@ footer {
     color: #aaa;
 }
 
-.close-modal:hover {
-    color: var(--text-color);
-}
+.close-modal:hover { color: var(--text-color); }
 
 .prayer-counter {
     display: grid;
@@ -225,14 +208,8 @@ footer {
     cursor: pointer;
 }
 
-.btn-counter.active {
-    background-color: var(--bg-danger);
-    color: var(--text-light);
-}
-
-.progress-container {
-    margin: 1.5rem 0;
-}
+.btn-counter.active { background-color: var(--bg-danger); color: var(--text-light); }
+.progress-container { margin: 1.5rem 0; }
 
 .progress-bar {
     height: 2rem;
@@ -248,9 +225,7 @@ footer {
     transition: width 0.3s ease;
 }
 
-.progress-completed {
-    background-color: var(--bg-success);
-}
+.progress-completed { background-color: var(--bg-success); }
 
 @media (max-width: 768px) {
     .novena-selector {
@@ -272,15 +247,82 @@ footer {
         margin-right: 0.5rem;
     }
     
-    .novena-selector .btn {
-        width: auto;
-    }
+    .novena-selector .btn { width: auto; }
+    .day-selector { grid-template-columns: repeat(2, 1fr); }
+    .prayer-counter { grid-template-columns: repeat(2, 1fr); }
+}
 
-    .day-selector {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* ================================
+   MODO ACESSÍVEL
+   ================================ */
 
-    .prayer-counter {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Botão flutuante de acessibilidade */
+.accessibility-float {
+    position: fixed;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem; /* só se usar emoji */
+    background-color: var(--bg-success);
+    color: var(--text-light);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.accessibility-float:hover {
+    background-color: var(--bg-warning);
+    color: var(--text-dark);
+}
+
+.accessible-mode .accessibility-float {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+    border: 2px solid #fff;
+}
+
+.accessible-mode {
+    background-color: #000 !important;      /* fundo escuro */
+    color: #fff !important;                 /* texto claro */
+    font-size: 1.2em;                         /* texto maior */
+    line-height: 1.8;
+}
+
+.accessible-mode header,
+.accessible-mode footer,
+.accessible-mode .section,
+.accessible-mode #dailyMessage,
+.accessible-mode .modal-content {
+    background-color: #111 !important;
+    color: #fff !important;
+    border: 2px solid #FFD700;              /* borda dourada para destaque */
+}
+
+/* Links, botões e foco */
+.accessible-mode a,
+.accessible-mode button,
+.accessible-mode select {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+    font-weight: bold;
+    outline: 3px solid #FFD700 !important;
+}
+
+/* Botões ativos */
+.accessible-mode .btn-day.active,
+.accessible-mode .btn-counter.active {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+}
+
+/* Barra de progresso */
+.accessible-mode .progress {
+    background-color: #FFD700 !important;
 }
