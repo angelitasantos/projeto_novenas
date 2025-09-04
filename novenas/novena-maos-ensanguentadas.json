@@ -13,6 +13,16 @@
 			"Os milhares de fiéis que, com a <strong>Oração das Mãos ensanguentadas de Jesus</strong>, já foram tocados, unem-se a uma só voz para testemunhar: <strong><i>“Fomos curados graças às Suas Chagas”. (Is 53, 5b)</i></strong>"
 		]
 	},
+	"finalPrayerContent": {
+		"title": "Oração Final da Novena",
+		"content": [
+			"<strong>CURA-ME, SENHOR JESUS!</strong>",
+			"Jesus, coloca Tuas <strong>Mãos</strong> benditas, ensanguentadas, chagadas e abertas sobre mim, neste momento. Sinto-me completamente sem forças para prosseguir carregando as minhas cruzes. Preciso que a força e o poder de Tuas <strong>Mãos</strong>, que suportaram a mais profunda dor ao serem pregadas na Cruz, reergam-me e curem-me agora. Jesus, não peço somente por mim, mas também por todos aqueles que mais amo. Nós precisamos desesperadamente de cura física e espiritual, através do toque consolador de Tuas <strong>Mãos</strong> ensanguentadas e infinitamente poderosas.",
+			"Eu reconheço, apesar de toda a minha limitação e da infinidade dos meus pecados, que és Deus, Onipotente e Misericordioso, para agir e realizar o impossível. Com fé e total confiança, posso dizer: <strong><em>\"Mãos ensanguentadas de Jesus, Mãos feridas lá na Cruz! Vêm tocar em mim. Vem, Senhor Jesus!\"</em></strong>",
+			"<strong>GLÓRIA AO PAI</strong>",
+			"<strong>PAI NOSSO</strong>"
+		]
+	},
 	"days": [
 		{
 			"day": 1,
@@ -96,16 +106,6 @@
 			"read": false
 		}
 	],
-	"finalPrayerContent": {
-		"title": "Oração Final da Novena",
-		"content": [
-			"<strong>CURA-ME, SENHOR JESUS!</strong>",
-			"Jesus, coloca Tuas <strong>Mãos</strong> benditas, ensanguentadas, chagadas e abertas sobre mim, neste momento. Sinto-me completamente sem forças para prosseguir carregando as minhas cruzes. Preciso que a força e o poder de Tuas <strong>Mãos</strong>, que suportaram a mais profunda dor ao serem pregadas na Cruz, reergam-me e curem-me agora. Jesus, não peço somente por mim, mas também por todos aqueles que mais amo. Nós precisamos desesperadamente de cura física e espiritual, através do toque consolador de Tuas <strong>Mãos</strong> ensanguentadas e infinitamente poderosas.",
-			"Eu reconheço, apesar de toda a minha limitação e da infinidade dos meus pecados, que és Deus, Onipotente e Misericordioso, para agir e realizar o impossível. Com fé e total confiança, posso dizer: <strong><em>\"Mãos ensanguentadas de Jesus, Mãos feridas lá na Cruz! Vêm tocar em mim. Vem, Senhor Jesus!\"</em></strong>",
-			"<strong>GLÓRIA AO PAI</strong>",
-			"<strong>PAI NOSSO</strong>"
-		]
-	},
 	"rosaryContent": {
 		"title": "Terço das Mãos Ensanguentadas",
 		"content": [

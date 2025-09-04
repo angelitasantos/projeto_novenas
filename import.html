@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar Novena</title>
+    <link rel="shortcut icon" href="./static/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body>
+
+    <main class="container">
+        <section class="section">
+            <h1>📂 Importar Novena via Excel</h1>
+            <p>Baixe o modelo abaixo, preencha os dados da novena e depois faça o upload:</p>
+
+            <!-- Botão para baixar o template -->
+            <a href="./static/template_novena.xlsx" download>
+                <button class="btn btn-danger">⬇️ Baixar Modelo Excel</button>
+            </a>
+
+            <!-- Upload do Excel -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="uploadExcel" class="label">Selecione um arquivo Excel:</label>
+                    <input type="file" id="uploadExcel" class="btn" accept=".xlsx,.xls" />
+                </div>
+            </div>          
+
+            <button class="btn btn-warning" id="importBtn">📤 Importar Novena</button>
+            <pre id="output"></pre>
+        </section>
+    </main>
+
+    <!-- Lib XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- Script de importação -->
+    <script src="./static/import.js"></script>
+</body>
+</html>
